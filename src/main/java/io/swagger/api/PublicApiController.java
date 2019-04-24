@@ -46,7 +46,7 @@ public class PublicApiController implements PublicApi {
 
     public ResponseEntity<Void> publicPingGet() {
         String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     public ResponseEntity<Void> register(@ApiParam(value = "" ,required=true )  @Valid @RequestBody RegisterData body) {
