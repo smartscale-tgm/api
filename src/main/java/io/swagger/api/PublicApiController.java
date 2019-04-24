@@ -40,12 +40,15 @@ public class PublicApiController implements PublicApi {
     }
 
     public ResponseEntity<Jwt> authenticate(@ApiParam(value = "The authenticate details" ,required=true )  @Valid @RequestBody Authenticate body) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Jwt>(HttpStatus.NOT_IMPLEMENTED);
+        if(!(body.getEmail().equalsIgnoreCase("david@langheiter.com") && body.getPassword().equals("david"))) {
+            return new ResponseEntity<Jwt>(HttpStatus.valueOf(400));
+        }
+        Jwt ret = new Jwt();
+        ret.setJwt("xxx.jwt.yyy");
+        return new ResponseEntity<Jwt>(ret, HttpStatus.OK);
     }
 
     public ResponseEntity<Void> publicPingGet() {
-        String accept = request.getHeader("Accept");
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
