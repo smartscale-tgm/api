@@ -27,20 +27,20 @@ public class PublicApiControllerIntegrationTest {
     public void authenticateTest() throws Exception {
         Authenticate body = new Authenticate();
         ResponseEntity<Jwt> responseEntity = api.authenticate(body);
-        assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 
     @Test
     public void publicPingGetTest() throws Exception {
         ResponseEntity<Void> responseEntity = api.publicPingGet();
-        assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
     public void registerTest() throws Exception {
         RegisterData body = new RegisterData();
         ResponseEntity<Void> responseEntity = api.register(body);
-        assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 
     @Test

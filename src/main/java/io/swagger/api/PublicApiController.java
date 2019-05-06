@@ -50,9 +50,12 @@ public class PublicApiController implements PublicApi {
     }
 
     public ResponseEntity<Jwt> authenticate(@ApiParam(value = "The authenticate details", required = true) @Valid @RequestBody Authenticate body) {
+        if(body.getEmail() == null || body.getPassword() == null) {
+            return new ResponseEntity<Jwt>(HttpStatus.BAD_REQUEST);
+        }
         UserMongo user = this.userRepository.findByEmail(body.getEmail().toLowerCase());
         if(!user.getPassword().equals(body.getPassword())) {
-            return new ResponseEntity<Jwt>(HttpStatus.valueOf(400));
+            return new ResponseEntity<Jwt>(HttpStatus.BAD_REQUEST);
         }
 
         Jwt ret = new Jwt();
