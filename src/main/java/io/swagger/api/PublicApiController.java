@@ -9,6 +9,7 @@ import io.swagger.model.Jwt;
 import io.swagger.model.RegisterData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,11 @@ public class PublicApiController implements PublicApi {
     }
 
     public ResponseEntity<Void> register(@ApiParam(value = "", required = true) @Valid @RequestBody RegisterData body) {
+
+        if(!EmailValidator.getInstance().isValid(body.getEmail())) {
+            return new ResponseEntity<Void>(HttpStatus.valueOf(400));
+        }
+
         try {
             UserMongo user = new UserMongo(
                     body.getEmail(),
