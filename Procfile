@@ -1,1 +1,1 @@
-web: java -jar target/swagger-spring-1.0.0.jar --server.port=$PORT
+web: java -jar target/smart-scale-1.0.0.jar --server.port=$PORT
