@@ -69,8 +69,20 @@ public class PublicApiController implements PublicApi {
     }
 
     public ResponseEntity<Void> register(@ApiParam(value = "", required = true) @Valid @RequestBody RegisterData body) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        try {
+            UserMongo user = new UserMongo(
+                    body.getEmail(),
+                    body.getPassword(),
+                    body.getName(),
+                    body.getHeight(),
+                    body.getBirthday()
+            );
+
+            userRepository.save(user);
+            return new ResponseEntity<Void>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<Void>(HttpStatus.valueOf(400));
+        }
     }
 
     public ResponseEntity<Jwt> renewToken() {
