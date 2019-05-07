@@ -75,7 +75,7 @@ public class PublicApiController implements PublicApi {
     public ResponseEntity<Void> register(@ApiParam(value = "", required = true) @Valid @RequestBody RegisterData body) {
 
         if(!EmailValidator.getInstance().isValid(body.getEmail())) {
-            return new ResponseEntity<Void>(HttpStatus.valueOf(400));
+            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
         }
 
         try {
@@ -90,7 +90,7 @@ public class PublicApiController implements PublicApi {
             userRepository.save(user);
             return new ResponseEntity<Void>(HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<Void>(HttpStatus.valueOf(400));
+            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
         }
     }
 
