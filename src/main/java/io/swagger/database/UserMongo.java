@@ -6,6 +6,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import org.threeten.bp.LocalDate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Document(collection = "users")
 public class UserMongo {
 
@@ -14,18 +17,20 @@ public class UserMongo {
     @Indexed(unique = true)
     private String email;
     private String password;
-    private String role;
+    private List<String> roles;
     private String name;
     private Float height;
     private LocalDate birthday;
 
     public UserMongo() {
+        roles = new ArrayList<>();
     }
 
     public UserMongo(String email, String password, String name, Float height, LocalDate birthday) {
+        this();
         this.email = email;
         this.password = password;
-        this.role = "user";
+        this.roles.add("user");
         this.name = name;
         this.height = height;
         this.birthday = birthday;
@@ -55,12 +60,12 @@ public class UserMongo {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
+    public List<String> getRoles() {
+        return roles;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 
     public String getName() {

@@ -18,6 +18,12 @@ public class Jwt   {
   @JsonProperty("jwt")
   private String jwt = null;
 
+  public Jwt() {}
+
+  public Jwt(String jwt) {
+    this.jwt = jwt;
+  }
+
   public Jwt jwt(String jwt) {
     this.jwt = jwt;
     return this;

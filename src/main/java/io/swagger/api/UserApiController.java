@@ -41,7 +41,9 @@ public class UserApiController implements UserApi {
 
     public ResponseEntity<UserData> getCurrentUser() {
         String accept = request.getHeader("Accept");
-        return new ResponseEntity<UserData>(HttpStatus.NOT_IMPLEMENTED);
+        UserData userData = new UserData();
+        userData.setName("Testing the test");
+        return new ResponseEntity<UserData>(userData, HttpStatus.OK);
     }
 
     public ResponseEntity<List<StepEntry>> getStepHistory(@Min(0)@ApiParam(value = "The number of items to skip before starting to collect the result set.", allowableValues = "") @Valid @RequestParam(value = "offset", required = false) Integer offset,@Min(1) @Max(20) @ApiParam(value = "The numbers of items to return.", allowableValues = "") @Valid @RequestParam(value = "limit", required = false) Integer limit) {

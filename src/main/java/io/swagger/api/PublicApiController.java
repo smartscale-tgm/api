@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +38,8 @@ public class PublicApiController implements PublicApi {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private static final Logger log = LoggerFactory.getLogger(PublicApiController.class);
 
@@ -44,7 +47,7 @@ public class PublicApiController implements PublicApi {
 
     private final HttpServletRequest request;
 
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
     public PublicApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
@@ -81,7 +84,7 @@ public class PublicApiController implements PublicApi {
         try {
             UserMongo user = new UserMongo(
                     body.getEmail(),
-                    body.getPassword(),
+                    this.bCryptPasswordEncoder.encode(body.getPassword()),
                     body.getName(),
                     body.getHeight(),
                     body.getBirthday()
