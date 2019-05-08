@@ -10,12 +10,17 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.swing.*;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
@@ -62,11 +67,20 @@ public class UserApiController implements UserApi {
     }
 
     public ResponseEntity<List<StepEntry>> getStepHistory(@Min(0)@ApiParam(value = "The number of items to skip before starting to collect the result set.", allowableValues = "") @Valid @RequestParam(value = "offset", required = false) Integer offset,@Min(1) @Max(20) @ApiParam(value = "The numbers of items to return.", allowableValues = "") @Valid @RequestParam(value = "limit", required = false) Integer limit) {
-        List<MongoSteps> steps = stepsRepository.findByUserOrderByTimestampDesc(request.getUserPrincipal().getName());
+        // Get default values
+        offset = offset == null ? 0 : offset;
+        limit = limit == null ? 10 : limit;
+
+        // Build page request
+        Pageable pageRequest = new OffsetBasedPageRequest(offset, limit, new Sort(Sort.Direction.DESC, "timestamp"));
+        Page<MongoSteps> page = stepsRepository.getStepsByPage(request.getUserPrincipal().getName(), pageRequest);
+
+        // Convert to StepEntry
         List<StepEntry> outSteps = new ArrayList<>();
-        for(MongoSteps step : steps) {
-            outSteps.add(step.getStepEntry());
+        for(MongoSteps steps : page) {
+            outSteps.add(steps.getStepEntry());
         }
+        
         return new ResponseEntity<List<StepEntry>>(outSteps, HttpStatus.OK);
     }
 
