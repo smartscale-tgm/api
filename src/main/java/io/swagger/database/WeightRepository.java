@@ -1,11 +1,13 @@
 package io.swagger.database;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
-
-import java.util.List;
+import org.springframework.data.mongodb.repository.Query;
 
 public interface WeightRepository extends MongoRepository<MongoWeight, String> {
 
-    List<MongoWeight> findByUserOrderByTimestampDesc(String user);
+    @Query(value="{user: ?0}")
+    Page<MongoWeight> getStepsByPage(String user, Pageable pageable);
 
 }

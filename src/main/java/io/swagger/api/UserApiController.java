@@ -80,16 +80,25 @@ public class UserApiController implements UserApi {
         for(MongoSteps steps : page) {
             outSteps.add(steps.getStepEntry());
         }
-        
+
         return new ResponseEntity<List<StepEntry>>(outSteps, HttpStatus.OK);
     }
 
     public ResponseEntity<List<WeightEntry>> getWeightHistory(@Min(0)@ApiParam(value = "The number of items to skip before starting to collect the result set.", allowableValues = "") @Valid @RequestParam(value = "offset", required = false) Integer offset,@Min(1) @Max(20) @ApiParam(value = "The numbers of items to return.", allowableValues = "") @Valid @RequestParam(value = "limit", required = false) Integer limit) {
-        List<MongoWeight> weights = weightRepository.findByUserOrderByTimestampDesc(request.getUserPrincipal().getName());
+        // Get default values
+        offset = offset == null ? 0 : offset;
+        limit = limit == null ? 10 : limit;
+
+        // Build page request
+        Pageable pageRequest = new OffsetBasedPageRequest(offset, limit, new Sort(Sort.Direction.DESC, "timestamp"));
+        Page<MongoWeight> page = weightRepository.getStepsByPage(request.getUserPrincipal().getName(), pageRequest);
+
+        // Convert to StepEntry
         List<WeightEntry> outWeight = new ArrayList<>();
-        for(MongoWeight step : weights) {
+        for(MongoWeight step : page) {
             outWeight.add(step.getWeightEntry());
         }
+
         return new ResponseEntity<List<WeightEntry>>(outWeight, HttpStatus.OK);
     }
 
