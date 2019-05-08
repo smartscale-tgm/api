@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-24T07:50:52.967Z[GMT]")
@@ -61,8 +62,12 @@ public class UserApiController implements UserApi {
     }
 
     public ResponseEntity<List<StepEntry>> getStepHistory(@Min(0)@ApiParam(value = "The number of items to skip before starting to collect the result set.", allowableValues = "") @Valid @RequestParam(value = "offset", required = false) Integer offset,@Min(1) @Max(20) @ApiParam(value = "The numbers of items to return.", allowableValues = "") @Valid @RequestParam(value = "limit", required = false) Integer limit) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<List<StepEntry>>(HttpStatus.NOT_IMPLEMENTED);
+        List<MongoSteps> steps = stepsRepository.findByUserOrderByTimestampDesc(request.getUserPrincipal().getName());
+        List<StepEntry> outSteps = new ArrayList<>();
+        for(MongoSteps step : steps) {
+            outSteps.add(step.getStepEntry());
+        }
+        return new ResponseEntity<List<StepEntry>>(outSteps, HttpStatus.OK);
     }
 
     public ResponseEntity<List<WeightEntry>> getWeightHistory(@Min(0)@ApiParam(value = "The number of items to skip before starting to collect the result set.", allowableValues = "") @Valid @RequestParam(value = "offset", required = false) Integer offset,@Min(1) @Max(20) @ApiParam(value = "The numbers of items to return.", allowableValues = "") @Valid @RequestParam(value = "limit", required = false) Integer limit) {
