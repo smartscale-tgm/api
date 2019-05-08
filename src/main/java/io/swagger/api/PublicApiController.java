@@ -2,6 +2,8 @@ package io.swagger.api;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import io.swagger.database.MongoUser;
 import io.swagger.database.UserRepository;
 import io.swagger.model.Authenticate;
@@ -15,12 +17,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.Date;
+
+import static io.swagger.security.JWTAuthenticationFilter.generateJwtToken;
+import static io.swagger.security.SecurityConstants.*;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-24T07:50:52.967Z[GMT]")
 @Controller
@@ -44,11 +52,11 @@ public class PublicApiController implements PublicApi {
     }
 
     public ResponseEntity<Jwt> authenticate(@ApiParam(value = "The authenticate details", required = true) @Valid @RequestBody Authenticate body) {
-        if(body.getEmail() == null || body.getPassword() == null) {
+        if (body.getEmail() == null || body.getPassword() == null) {
             return new ResponseEntity<Jwt>(HttpStatus.BAD_REQUEST);
         }
         MongoUser user = this.userRepository.findByEmail(body.getEmail().toLowerCase());
-        if(!user.getPassword().equals(body.getPassword())) {
+        if (!user.getPassword().equals(body.getPassword())) {
             return new ResponseEntity<Jwt>(HttpStatus.BAD_REQUEST);
         }
 
@@ -67,7 +75,7 @@ public class PublicApiController implements PublicApi {
 
     public ResponseEntity<Void> register(@ApiParam(value = "", required = true) @Valid @RequestBody RegisterData body) {
 
-        if(!EmailValidator.getInstance().isValid(body.getEmail())) {
+        if (!EmailValidator.getInstance().isValid(body.getEmail())) {
             return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
         }
 
@@ -88,8 +96,30 @@ public class PublicApiController implements PublicApi {
     }
 
     public ResponseEntity<Jwt> renewToken() {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Jwt>(HttpStatus.NOT_IMPLEMENTED);
+        String token = request.getHeader(HEADER_STRING);
+
+        if (token == null) {
+            return new ResponseEntity<Jwt>(HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            DecodedJWT decodedJWT = JWT.decode(token.replace(TOKEN_PREFIX, ""));
+
+            if ((decodedJWT.getExpiresAt().getTime() + EXPIRATION_TIME) < new Date(System.currentTimeMillis()).getTime()) {
+                return new ResponseEntity<Jwt>(HttpStatus.UNAUTHORIZED);
+            }
+
+            MongoUser user = userRepository.findById(decodedJWT.getSubject());
+
+            Jwt newToken = new Jwt(generateJwtToken(
+                    user.getId(),
+                    user.getRoles().toArray(new String[]{})
+            ));
+
+            return new ResponseEntity<>(newToken, HttpStatus.OK);
+        } catch (JWTDecodeException e) {
+            return new ResponseEntity<Jwt>(HttpStatus.UNAUTHORIZED);
+        }
     }
 
 }

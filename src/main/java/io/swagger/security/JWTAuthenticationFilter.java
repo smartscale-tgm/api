@@ -52,18 +52,26 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
 
         List<String> roles = new ArrayList<>();
-        for(GrantedAuthority grantedAuthority : authResult.getAuthorities()) {
+        for (GrantedAuthority grantedAuthority : authResult.getAuthorities()) {
             roles.add(grantedAuthority.getAuthority());
         }
 
-        String token = JWT.create()
-                .withSubject(((User) authResult.getPrincipal()).getUsername())
-                .withArrayClaim("roles", roles.toArray(new String[] {}))
-                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .sign(Algorithm.HMAC512(SECRET.getBytes()));
+        String token = generateJwtToken(
+                ((User) authResult.getPrincipal()).getUsername(),
+                roles.toArray(new String[]{})
+        );
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(new ObjectMapper().writeValueAsString(new Jwt(token)));
     }
+
+    public static String generateJwtToken(String username, String[] roles) {
+        return JWT.create()
+                .withSubject(username)
+                .withArrayClaim("roles", roles)
+                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .sign(Algorithm.HMAC512(SECRET.getBytes()));
+    }
+
 }
