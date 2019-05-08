@@ -45,6 +45,7 @@ public class ScaleApiController implements ScaleApi {
     }
 
     public ResponseEntity<Void> insertScaleData(@ApiParam(value = "The data to insert" ,required=true )  @Valid @RequestBody WeightEntry body) {
+        // TODO: refernce from scale to acctual user
         MongoWeight mongoWeight = new MongoWeight(request.getUserPrincipal().getName(), body);
         weightRepository.save(mongoWeight);
         return new ResponseEntity<Void>(HttpStatus.OK);
