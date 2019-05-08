@@ -1,11 +1,9 @@
 package io.swagger.api;
 
-import io.swagger.database.MongoSteps;
-import io.swagger.database.MongoUser;
-import io.swagger.database.StepsRepository;
-import io.swagger.database.UserRepository;
+import io.swagger.database.*;
 import io.swagger.model.StepEntry;
 import io.swagger.model.UserData;
+import io.swagger.model.Weight;
 import io.swagger.model.WeightEntry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
@@ -32,6 +30,8 @@ public class UserApiController implements UserApi {
     private UserRepository userRepository;
     @Autowired
     private StepsRepository stepsRepository;
+    @Autowired
+    private WeightRepository weightRepository;
 
     private static final Logger log = LoggerFactory.getLogger(UserApiController.class);
 
@@ -71,8 +71,12 @@ public class UserApiController implements UserApi {
     }
 
     public ResponseEntity<List<WeightEntry>> getWeightHistory(@Min(0)@ApiParam(value = "The number of items to skip before starting to collect the result set.", allowableValues = "") @Valid @RequestParam(value = "offset", required = false) Integer offset,@Min(1) @Max(20) @ApiParam(value = "The numbers of items to return.", allowableValues = "") @Valid @RequestParam(value = "limit", required = false) Integer limit) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<List<WeightEntry>>(HttpStatus.NOT_IMPLEMENTED);
+        List<MongoWeight> weights = weightRepository.findByUserOrderByTimestampDesc(request.getUserPrincipal().getName());
+        List<WeightEntry> outWeight = new ArrayList<>();
+        for(MongoWeight step : weights) {
+            outWeight.add(step.getWeightEntry());
+        }
+        return new ResponseEntity<List<WeightEntry>>(outWeight, HttpStatus.OK);
     }
 
     public ResponseEntity<Void> insertUserData(@ApiParam(value = "The data to insert" ,required=true )  @Valid @RequestBody StepEntry body) {

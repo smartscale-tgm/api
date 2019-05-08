@@ -25,7 +25,7 @@ public class MongoWeight {
         this(user, weightEntry.getWeight(), weightEntry.getTimestamp());
     }
 
-    public WeightEntry getStepEntry() {
+    public WeightEntry getWeightEntry() {
         WeightEntry weightEntry = new WeightEntry();
         weightEntry.setWeight(this.getWeight());
         weightEntry.setTimestamp(this.getTimestamp());
