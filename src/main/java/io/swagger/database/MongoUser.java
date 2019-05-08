@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "users")
-public class UserMongo {
+public class MongoUser {
 
     @Id
     private String id;
@@ -22,11 +22,11 @@ public class UserMongo {
     private Integer height;
     private LocalDate birthday;
 
-    public UserMongo() {
+    public MongoUser() {
         roles = new ArrayList<>();
     }
 
-    public UserMongo(String email, String password, String name, Integer height, LocalDate birthday) {
+    public MongoUser(String email, String password, String name, Integer height, LocalDate birthday) {
         this();
         this.email = email;
         this.password = password;
@@ -94,7 +94,7 @@ public class UserMongo {
 
     @Override
     public String toString() {
-        return "UserMongo{" +
+        return "MongoUser{" +
                 "email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +

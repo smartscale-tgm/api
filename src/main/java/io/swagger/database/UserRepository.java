@@ -2,8 +2,8 @@ package io.swagger.database;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface UserRepository extends MongoRepository<UserMongo, String> {
+public interface UserRepository extends MongoRepository<MongoUser, String> {
 
-    UserMongo findByEmail(String email);
+    MongoUser findByEmail(String email);
 
 }

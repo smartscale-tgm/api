@@ -1,6 +1,6 @@
 package io.swagger.security;
 
-import io.swagger.database.UserMongo;
+import io.swagger.database.MongoUser;
 import io.swagger.database.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,11 +22,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserMongo userMongo = userRepository.findByEmail(email);
-        if (userMongo == null) {
+        MongoUser mongoUser = userRepository.findByEmail(email);
+        if (mongoUser == null) {
             throw new UsernameNotFoundException(email);
         }
-        return new User(userMongo.getEmail(), userMongo.getPassword(), getAuthorities(userMongo.getRoles()));
+        return new User(mongoUser.getEmail(), mongoUser.getPassword(), getAuthorities(mongoUser.getRoles()));
     }
 
     public static List<GrantedAuthority> getAuthorities(List<String> roles) {
