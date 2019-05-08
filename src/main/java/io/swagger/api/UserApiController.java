@@ -1,6 +1,8 @@
 package io.swagger.api;
 
+import io.swagger.database.MongoSteps;
 import io.swagger.database.MongoUser;
+import io.swagger.database.StepsRepository;
 import io.swagger.database.UserRepository;
 import io.swagger.model.StepEntry;
 import io.swagger.model.UserData;
@@ -27,6 +29,8 @@ public class UserApiController implements UserApi {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private StepsRepository stepsRepository;
 
     private static final Logger log = LoggerFactory.getLogger(UserApiController.class);
 
@@ -41,9 +45,7 @@ public class UserApiController implements UserApi {
     }
 
     public ResponseEntity<UserData> getCurrentUser() {
-        String accept = request.getHeader("Accept");
-
-        MongoUser user = userRepository.findByEmail(request.getUserPrincipal().getName());
+        MongoUser user = userRepository.findById(request.getUserPrincipal().getName());
         if(user == null) {
             return new ResponseEntity<UserData>(HttpStatus.UNAUTHORIZED);
         }
@@ -69,8 +71,9 @@ public class UserApiController implements UserApi {
     }
 
     public ResponseEntity<Void> insertUserData(@ApiParam(value = "The data to insert" ,required=true )  @Valid @RequestBody StepEntry body) {
-
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        MongoSteps mongoSteps = new MongoSteps(request.getUserPrincipal().getName(), body);
+        stepsRepository.save(mongoSteps);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
 }

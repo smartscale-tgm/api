@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (mongoUser == null) {
             throw new UsernameNotFoundException(email);
         }
-        return new User(mongoUser.getEmail(), mongoUser.getPassword(), getAuthorities(mongoUser.getRoles()));
+        return new User(mongoUser.getId(), mongoUser.getPassword(), getAuthorities(mongoUser.getRoles()));
     }
 
     public static List<GrantedAuthority> getAuthorities(List<String> roles) {
