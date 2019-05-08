@@ -61,8 +61,6 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         List<String> roles = rolesClaim.asList(String.class);
         List<GrantedAuthority> authorities = UserDetailsServiceImpl.getAuthorities(roles);
 
-        System.out.println("Authed user with JWT: " + user + ", roles: " + String.join(", ", roles));
-
         return new UsernamePasswordAuthenticationToken(user, null, authorities);
     }
 

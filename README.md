@@ -16,3 +16,6 @@ You can view the api documentation in swagger-ui by pointing to
 http://localhost:8080/  
 
 Change default port value in application.properties
+
+## Sources
+* [Spring Security JWT](https://auth0.com/blog/implementing-jwt-authentication-on-spring-boot/)
