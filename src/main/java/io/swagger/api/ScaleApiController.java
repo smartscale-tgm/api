@@ -1,10 +1,14 @@
 package io.swagger.api;
 
+import io.swagger.database.MongoSteps;
+import io.swagger.database.MongoWeight;
+import io.swagger.database.WeightRepository;
 import io.swagger.model.WeightEntry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,6 +29,9 @@ import java.util.Map;
 @Controller
 public class ScaleApiController implements ScaleApi {
 
+    @Autowired
+    private WeightRepository weightRepository;
+
     private static final Logger log = LoggerFactory.getLogger(ScaleApiController.class);
 
     private final ObjectMapper objectMapper;
@@ -38,8 +45,9 @@ public class ScaleApiController implements ScaleApi {
     }
 
     public ResponseEntity<Void> insertScaleData(@ApiParam(value = "The data to insert" ,required=true )  @Valid @RequestBody WeightEntry body) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        MongoWeight mongoWeight = new MongoWeight(request.getUserPrincipal().getName(), body);
+        weightRepository.save(mongoWeight);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
 }
