@@ -19,14 +19,14 @@ public class UserMongo {
     private String password;
     private List<String> roles;
     private String name;
-    private Float height;
+    private Integer height;
     private LocalDate birthday;
 
     public UserMongo() {
         roles = new ArrayList<>();
     }
 
-    public UserMongo(String email, String password, String name, Float height, LocalDate birthday) {
+    public UserMongo(String email, String password, String name, Integer height, LocalDate birthday) {
         this();
         this.email = email;
         this.password = password;
@@ -76,11 +76,11 @@ public class UserMongo {
         this.name = name;
     }
 
-    public Float getHeight() {
+    public Integer getHeight() {
         return height;
     }
 
-    public void setHeight(Float height) {
+    public void setHeight(Integer height) {
         this.height = height;
     }
 

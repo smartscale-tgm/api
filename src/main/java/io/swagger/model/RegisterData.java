@@ -17,7 +17,7 @@ import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-24T07:50:52.967Z[GMT]")
 public class RegisterData   {
   @JsonProperty("height")
-  private Float height = null;
+  private Integer height = null;
 
   @JsonProperty("name")
   private String name = null;
@@ -31,7 +31,7 @@ public class RegisterData   {
   @JsonProperty("password")
   private String password = null;
 
-  public RegisterData height(Float height) {
+  public RegisterData height(Integer height) {
     this.height = height;
     return this;
   }
@@ -43,11 +43,11 @@ public class RegisterData   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
-  public Float getHeight() {
+  public Integer getHeight() {
     return height;
   }
 
-  public void setHeight(Float height) {
+  public void setHeight(Integer height) {
     this.height = height;
   }
 
