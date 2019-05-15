@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.swagger.database.MongoUser;
 import io.swagger.database.UserRepository;
+import io.swagger.error.HttpStatusError;
 import io.swagger.model.Authenticate;
 import io.swagger.model.Jwt;
 import io.swagger.model.RegisterData;
@@ -76,7 +77,8 @@ public class PublicApiController implements PublicApi {
     public ResponseEntity<Void> register(@ApiParam(value = "", required = true) @Valid @RequestBody RegisterData body) {
 
         if (!EmailValidator.getInstance().isValid(body.getEmail())) {
-            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+            throw new HttpStatusError("Email is not valid.", HttpStatus.BAD_REQUEST);
+            //return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
         }
 
         try {
@@ -91,7 +93,7 @@ public class PublicApiController implements PublicApi {
             userRepository.save(user);
             return new ResponseEntity<Void>(HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+            throw new RuntimeException("Testing the test 1");
         }
     }
 
